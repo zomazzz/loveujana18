@@ -99,128 +99,19 @@
       }
     }
 
-    /* ══ GATE (countdown before midnight) ══ */
-    #gate {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 3rem;
-    }
-
-    #gate::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgb(255, 229, 216) 0%, transparent 60%);
-      z-index: -1;
-      animation: pulseLoveBg 1s infinite;
-      pointer-events: none;
-    }
-
-    @keyframes pulseLoveBg {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.6;
-      }
-
-      50% {
-        transform: scale(1.3);
-        opacity: 1;
-      }
-    }
-
-    .gate-title {
-      font-family: 'Caveat', cursive;
-      font-weight: 700;
-      font-size: clamp(22px, 5vw, 34px);
-      color: var(--terracotta);
-      margin-bottom: 0.4rem;
-    }
-
-    .gate-sub {
-      font-family: 'Indie Flower', cursive;
-      font-size: clamp(14px, 2.5vw, 17px);
-      color: var(--text-light);
-      margin-bottom: 2.5rem;
-      line-height: 1.6;
-    }
-
-    .gate-clock {
-      display: flex;
-      gap: clamp(12px, 3vw, 24px);
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 1.8rem;
-    }
-
-    .gate-box {
-      background: var(--warm-white);
-      border: 2px dashed var(--terracotta-light);
-      border-radius: 20px;
-      padding: clamp(1rem, 3vw, 1.8rem) clamp(1.4rem, 3vw, 2.4rem);
-      min-width: 84px;
-    }
-
-    .gate-num {
-      font-family: 'Caveat', cursive;
-      font-weight: 700;
-      font-size: clamp(46px, 10vw, 72px);
-      color: var(--terracotta-dark);
-      display: block;
-      line-height: 1;
-    }
-
-    .gate-label {
-      font-family: 'Patrick Hand', cursive;
-      font-size: 13px;
-      color: var(--text-light);
-      letter-spacing: 0.08em;
-    }
-
-    .gate-note {
-      font-family: 'Indie Flower', cursive;
-      font-size: clamp(14px, 2.5vw, 18px);
-      color: var(--text-mid);
-      max-width: 380px;
-      line-height: 1.7;
-    }
-
-    .spin-star {
-      display: inline-block;
-      color: var(--warm-gold);
-      animation: spinny 4s linear infinite;
-      font-size: 20px;
-    }
-
-    @keyframes spinny {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-
-
     /* ══ LOCK SCREEN ══ */
     #lockscreen {
       position: fixed;
       inset: 0;
       z-index: 900;
       background: transparent;
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
       text-align: center;
-      opacity: 0;
+      opacity: 1;
     }
 
     .lock-kicker {
@@ -749,18 +640,7 @@
 
   <div class="leaf-container" id="leafLayer"></div>
 
-  <!-- ══ COUNTDOWN GATE ══ -->
-  <div id="gate">
-    <p class="gate-title">Psssst… not yetttt! 🤗</p>
-    <p class="gate-sub">ur birthday gift is at midnight.<br>Come back thennnn, not nowwww ♡</p>
-    <div class="gate-clock">
-      <div class="gate-box"><span class="gate-num" id="g-h">00</span><span class="gate-label">hours</span></div>
-      <div class="gate-box"><span class="gate-num" id="g-m">00</span><span class="gate-label">minutes</span></div>
-      <div class="gate-box"><span class="gate-num" id="g-s">00</span><span class="gate-label">seconds</span></div>
-    </div>
-    <p class="gate-note"><span class="spin-star">✦</span> &nbsp;b7bk ya farawlety&nbsp; <span class="spin-star">✦</span>
-    </p>
-  </div>
+
 
   <!-- ══ LOCK SCREEN ══ -->
   <div id="lockscreen">
@@ -921,14 +801,6 @@
     }
     makeLeaves(document.getElementById('leafLayer'), 26);
 
-    // ── TIME ──
-    function midnight() {
-      const n = new Date();
-      return new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 0, 0, 0, 0);
-    }
-    // ↓ Change to "return true;" to test the lock screen flow without waiting for midnight
-    function isBirthday() { return new Date() >= midnight(); }
-
     // ── UTILS ──
     function crossfade(outEl, inEl, inDisplay = 'flex') {
       outEl.style.transition = 'opacity 1s ease';
@@ -946,29 +818,8 @@
       }, 1000);
     }
 
-    // ── GATE ──
-    const gate = document.getElementById('gate');
     const lockEl = document.getElementById('lockscreen');
     const mainEl = document.getElementById('main');
-    function pad(n) { return String(n).padStart(2, '0'); }
-
-    let gInt;
-    function tickGate() {
-      playPulse();
-      const diff = midnight() - new Date();
-      if (diff <= 0) {
-        clearInterval(gInt);
-        ['g-h', 'g-m', 'g-s'].forEach(id => { document.getElementById(id).textContent = '00'; });
-        crossfade(gate, lockEl, 'flex');
-        return;
-      }
-      const h = Math.floor(diff / 3600000), m = Math.floor(diff % 3600000 / 60000), s = Math.floor(diff % 60000 / 1000);
-      const upd = (id, v) => {
-        const el = document.getElementById(id), nv = pad(v);
-        if (el.textContent !== nv) { el.textContent = nv; }
-      };
-      upd('g-h', h); upd('g-m', m); upd('g-s', s);
-    }
 
     // ── LOCK SCREEN ──
     const EMOJIS = ['🥺', '🍃', '😭', '🤗', '💀', '🤨', '😂', '💗', '✨'];
@@ -1057,19 +908,7 @@
       setTimeout(() => { gSvg.style.transform = ''; }, 300);
     }
 
-    // ── INIT ──
-    if (isBirthday()) { gate.style.display = 'none'; crossfade(gate, lockEl, 'flex'); }
-    else { tickGate(); gInt = setInterval(tickGate, 1000); }
 
-    // ── DEV BYPASS ── keyboard shortcut (Alt + T) to skip straight to lock screen
-    let bypassed = false;
-    document.addEventListener('keydown', (e) => {
-      if (e.altKey && e.key.toLowerCase() === 't' && !bypassed) {
-        bypassed = true;
-        clearInterval(gInt);
-        crossfade(gate, lockEl, 'flex');
-      }
-    });
   </script>
 </body>
 
