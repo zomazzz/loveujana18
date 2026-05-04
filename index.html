@@ -206,27 +206,7 @@
       }
     }
 
-    /* dev bypass button */
-    #devBypass {
-      position: fixed;
-      bottom: 14px;
-      right: 14px;
-      z-index: 9999;
-      background: rgba(139, 74, 47, 0.12);
-      border: 1.5px dashed var(--terracotta-light);
-      color: var(--text-light);
-      font-family: 'Indie Flower', cursive;
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      opacity: 0.45;
-      transition: opacity 0.2s;
-    }
 
-    #devBypass:hover {
-      opacity: 1;
-    }
 
     /* ══ LOCK SCREEN ══ */
     #lockscreen {
@@ -784,12 +764,12 @@
 
   <!-- ══ LOCK SCREEN ══ -->
   <div id="lockscreen">
-    <p class="lock-kicker">YAAAAAAAAAAAAAAAAAAAAAY</p>
+    <p class="lock-kicker">yaaaaaaaaaaaaaaaaaaaaaaaaaaaay</p>
     <h1 class="lock-title">it's my baby's birthdayyyyyy 🎉</h1>
-    <p class="lock-sub">tap on ur most used emojies ✨</p>
+    <p class="lock-sub">tap on ur most used emojies</p>
     <div class="heart-grid" id="heartGrid"></div>
     <div class="lock-dots" id="lockDots"></div>
-    <p class="lock-fb" id="lockFb">find your emojis 💛</p>
+    <p class="lock-fb" id="lockFb">find your emojies</p>
   </div>
 
   <!-- ══ MAIN ══ -->
@@ -909,8 +889,6 @@
 
   </div>
 
-  <!-- dev bypass — hidden in corner, tap 3× to skip to lock screen -->
-  <button id="devBypass" title="dev: skip to lock screen">🔧 test</button>
 
   <script>
     // ── AUDIO ──
@@ -998,8 +976,8 @@
     }
 
     // ── LOCK SCREEN ──
-    const EMOJIS = ['🥺', '☕', '😭', '🍃', '💀', '🌻', '😂', '🤍', '✨'];
-    const TARGETS = new Set([0, 2, 4, 6]); // 🥺, 😭, 💀, 😂
+    const EMOJIS = ['🥺', '🍃', '😭', '🤗', '💀', '🤨', '😂', '💓', '✨'];
+    const TARGETS = new Set([2, 3, 6, 8]); // 🥺, 😭, 💀, 😂
     const hGrid = document.getElementById('heartGrid');
     const dotsEl = document.getElementById('lockDots');
     const fbEl = document.getElementById('lockFb');
@@ -1096,21 +1074,13 @@
     if (isBirthday()) { gate.style.display = 'none'; crossfade(gate, lockEl, 'flex'); }
     else { tickGate(); gInt = setInterval(tickGate, 1000); }
 
-    // ── DEV BYPASS ── tap 3 times to skip straight to lock screen
-    let bypassTaps = 0, bypassTimer;
-    document.getElementById('devBypass').addEventListener('click', () => {
-      bypassTaps++;
-      clearTimeout(bypassTimer);
-      bypassTimer = setTimeout(() => bypassTaps = 0, 1500);
-      if (bypassTaps >= 3) {
-        bypassTaps = 0;
+    // ── DEV BYPASS ── keyboard shortcut (Alt + T) to skip straight to lock screen
+    let bypassed = false;
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key.toLowerCase() === 't' && !bypassed) {
+        bypassed = true;
         clearInterval(gInt);
-        document.getElementById('devBypass').style.display = 'none';
         crossfade(gate, lockEl, 'flex');
-      } else {
-        const btn = document.getElementById('devBypass');
-        btn.textContent = bypassTaps === 1 ? '🔧 tap 2 more…' : '🔧 tap 1 more…';
-        setTimeout(() => { btn.textContent = '🔧 test'; }, 1400);
       }
     });
   </script>
